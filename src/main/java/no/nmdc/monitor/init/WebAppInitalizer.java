@@ -44,6 +44,7 @@ public class WebAppInitalizer extends AbstractDispatcherServletInitializer {
         ctx.scan("no.nmdc.monitor.controller");
         ctx.scan("no.nmdc.monitor.service");
         ctx.scan("no.nmdc.monitor.dao");
+        ctx.scan("no.nmdc.monitor.model");
         
         
         return ctx;
