@@ -224,7 +224,7 @@
         <profile>
             <id>localDeploy</id>
             <build>
-                <finalName>minmaxqc#v1</finalName>
+                <finalName>NmdcMonitor#v1</finalName>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>

@@ -14,6 +14,8 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import jdk.nashorn.internal.runtime.URIUtils;
 import no.nmdc.monitor.model.Datasets;
@@ -57,12 +59,17 @@ public class DatasetDAO {
         LOG.debug("Start refresh");
 
         refreshRemoteDatasets();
-        refreshOpenDAPList();
+      //  refreshOpenDAPList();
         
 
         LOG.debug("End refresh with " + datasets.getRemoteDatasets().size() + " datasets ");
     }
 
+    
+    public List getDatasets(){
+        return datasets.getRemoteDatasets();
+    }
+    
     private void refreshRemoteDatasets() {
 
         Datasets newDatasets = new Datasets();
@@ -111,15 +118,21 @@ public class DatasetDAO {
     }
 
     private void refreshOpenDAPList() {
+        HashMap newOpenDAPSet = new HashMap();
+        
+        
         for (RemoteDataset dataset:datasets.getRemoteDatasets()) {
           String  urlList =  dataset.getData_URL();
           if (urlList != null) {
             urlList = urlList.substring(1, urlList.length()-1); //Chop enclosing square brackets
             for (String url:urlList.split(",")) {
                 try {
+                    
+                    
+                  //  newOpenDAPSet.put(dataset.getLandingPage(), url)
                     LOG.debug(URLDecoder.decode(url,"UTF-8"));
                 } catch (UnsupportedEncodingException ex) {
-                    java.util.logging.Logger.getLogger(DatasetDAO.class.getName()).log(Level.SEVERE, null, ex);
+                    LOG.error("", ex);
                 }
             }
 
