@@ -14,8 +14,10 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import jdk.nashorn.internal.runtime.URIUtils;
 import no.nmdc.monitor.model.Datasets;
@@ -45,6 +47,7 @@ public class DatasetDAO {
     private String baseURL = "http://prod1.nmdc.no/UserInterface/metadata-api/search";
 
     Datasets datasets;
+    HashMap<String,ArrayList<String>> openDapMap;
 
     private CloseableHttpClient httpClient = HttpClients.createDefault();
     private ObjectMapper mapper = new ObjectMapper();
@@ -59,17 +62,21 @@ public class DatasetDAO {
         LOG.debug("Start refresh");
 
         refreshRemoteDatasets();
-      //  refreshOpenDAPList();
-        
+        LOG.debug("End  remote refresh with " + datasets.getRemoteDatasets().size() + " datasets ");
 
-        LOG.debug("End refresh with " + datasets.getRemoteDatasets().size() + " datasets ");
+        refreshOpenDAPList();
+
+        LOG.debug("End opendap refresh " + datasets.getRemoteDatasets().size() + " datasets ");
     }
 
-    
-    public List getDatasets(){
+    public List getDatasets() {
         return datasets.getRemoteDatasets();
     }
     
+    public Map getOpendapMap(){
+        return openDapMap;
+    }
+
     private void refreshRemoteDatasets() {
 
         Datasets newDatasets = new Datasets();
@@ -91,7 +98,7 @@ public class DatasetDAO {
     }
 
     private SearchResult getRESTChunkAt(int start) {
-      // mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES,true);
+        // mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES,true);
 
         SearchResult result = null;
         try {
@@ -118,6 +125,28 @@ public class DatasetDAO {
     }
 
     private void refreshOpenDAPList() {
+
+        HashMap<String,ArrayList<String>> newOpenDapMap = new HashMap<String,ArrayList<String>>();
+
+        for (RemoteDataset dataset : datasets.getRemoteDatasets()) {
+            LOG.debug("***********" + dataset.getProvider());
+            if (dataset.getUrlList() != null) {
+
+                for (String url : dataset.getUrlList()) {
+                    if (url.contains("dodsC")) {
+                        if (!newOpenDapMap.containsKey(dataset.getProvider())){
+                            newOpenDapMap.put(dataset.getProvider(),new ArrayList<String>());
+                        }
+                        newOpenDapMap.get(dataset.getProvider()).add(url);
+                        LOG.debug("----" + url);
+
+                    }
+                }
+            }
+        }
+       openDapMap = newOpenDapMap;
+        
+        /*
         HashMap newOpenDAPSet = new HashMap();
         
         
@@ -139,8 +168,7 @@ public class DatasetDAO {
           }
             
         }
-        
-        
+         */
     }
 
 }

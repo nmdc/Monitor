@@ -25,6 +25,12 @@ public class DatasetController {
     public Object getDataURL() {
         return datasetService.getDatasets();
     }
-    
+  
+    @RequestMapping("/openDapSets")
+    @ResponseBody
+    public Object getOpenDAPSets() {
+        return datasetService.getOpenDAPMap();
+    }
+  
   
 }

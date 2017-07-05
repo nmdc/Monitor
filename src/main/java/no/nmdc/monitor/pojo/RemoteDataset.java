@@ -18,7 +18,7 @@ public class RemoteDataset {
     
     private static final Logger LOG = LoggerFactory.getLogger(RemoteDataset.class);
     
-   @JsonProperty("Provider")
+ //  @JsonProperty("Provider")
     String provider;
    
    @JsonProperty("Data_URL_Type")
@@ -32,9 +32,9 @@ public class RemoteDataset {
 
     ArrayList<String> urlList;
   
-
-    public String getProvider() {
-        return provider;
+    @JsonSetter("Provider")
+    public void setProvider(String provider) {
+        this.provider = stripBrackets(provider);
     }
     public String getData_URL_Type() {
         return Data_URL_Type;
@@ -49,20 +49,20 @@ public class RemoteDataset {
       this.Data_URL=urlListString;
       urlList = new ArrayList<String>();
           if (urlListString != null) {
-            urlListString = urlListString.substring(1, urlListString.length()-1); //Chop enclosing square brackets
+//            urlListString = urlListString.substring(1, urlListString.length()-1); //Chop enclosing square brackets
+            urlListString = stripBrackets(urlListString);
             for (String url:urlListString.split(",")) {
                 try {
                     urlList.add(URLDecoder.decode(url,"UTF-8"));
-                    LOG.debug("----------------------"+urlList.size());
                 } catch (UnsupportedEncodingException ex) {
                     LOG.error("Error in url decode", ex);
                 }
             }      
-
-
-          }
+      }
     }
 
+   
+   
     
     public String getData_URL() {
         return Data_URL;
@@ -72,6 +72,12 @@ public class RemoteDataset {
         return landingPage;
     }
 
-    
+      public String getProvider() {
+        return provider;
+    }
+  
+    private String stripBrackets(String text){
+        return text.substring(1, text.length()-1); //Chop enclosing square brackets
+    }
 
 }
